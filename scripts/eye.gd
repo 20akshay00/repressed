@@ -5,6 +5,7 @@ extends Node2D
 @export var search_duration := 3.0
 @export var push_force := 5000.0
 @export var follow_speed := 1.5
+@export var iris_limit := 100.0
 
 var state := "CLOSED"
 var timer := 0.0
@@ -13,6 +14,8 @@ var time := 0.0
 @onready var beacon = $Beacon
 @onready var ray = $RayCast2D
 @onready var visual = $LightVisual
+@onready var iris = $Sprites/Body/Iris
+@export var player: Player
 
 func _ready() -> void:
 	timer = search_interval
@@ -21,9 +24,14 @@ func _ready() -> void:
 func _process(delta: float) -> void:
 	time += delta
 	var cam = get_viewport().get_camera_2d()
-	if cam:
-		global_position.y = lerp(global_position.y, cam.get_screen_center_position().y - 150, follow_speed * delta)
-		global_position.x = cam.get_screen_center_position().x - 350
+	if !cam: return
+	
+	global_position.y = lerp(global_position.y, cam.get_screen_center_position().y - 150, follow_speed * delta)
+	global_position.x = cam.get_screen_center_position().x - 350
+
+	if player:
+		var dir = global_position.direction_to(player.global_position)
+		iris.position = iris.position.lerp(dir * iris_limit, delta * 5.0)
 
 	timer -= delta
 	match state:

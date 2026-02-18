@@ -21,14 +21,16 @@ shape = SubResource("RectangleShape2D_60o0r")
 
 [node name="RayCast2D" type="RayCast2D" parent="."]
 
-[node name="EyeBody" type="Sprite2D" parent="."]
+[node name="Sprites" type="Node2D" parent="."]
+
+[node name="Body" type="Sprite2D" parent="Sprites"]
+clip_children = 2
 scale = Vector2(3, 3)
 texture = ExtResource("2_60o0r")
 
-[node name="Iris" type="Sprite2D" parent="."]
-scale = Vector2(3, 3)
+[node name="Iris" type="Sprite2D" parent="Sprites/Body"]
 texture = ExtResource("3_hrmh8")
 
-[node name="Eyelids" type="Sprite2D" parent="."]
+[node name="Eyelids" type="Sprite2D" parent="Sprites"]
 scale = Vector2(3, 3)
 texture = ExtResource("4_7wf7k")

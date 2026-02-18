@@ -84,8 +84,10 @@ grow_horizontal = 2
 grow_vertical = 2
 metadata/_edit_lock_ = true
 
-[node name="Eye" parent="." instance=ExtResource("5_71j4m")]
+[node name="Eye" parent="." node_paths=PackedStringArray("player") instance=ExtResource("5_71j4m")]
 position = Vector2(-115, 117)
+iris_limit = 5.0
+player = NodePath("../Player")
 
 [node name="Ocean" type="Area2D" parent="."]
 visible = false
