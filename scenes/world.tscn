@@ -1,0 +1,121 @@
+[gd_scene load_steps=9 format=3 uid="uid://hmlxati7afqi"]
+
+[ext_resource type="Script" uid="uid://lnim22gligur" path="res://scripts/player.gd" id="1_4wyf3"]
+[ext_resource type="PackedScene" uid="uid://dib2d8eliqf4h" path="res://scenes/memory.tscn" id="1_71j4m"]
+[ext_resource type="Texture2D" uid="uid://dd5aogd3x20d" path="res://icon.svg" id="1_nnsk1"]
+[ext_resource type="Shader" uid="uid://b0mebpwm7frug" path="res://assets/shaders/swirly.gdshader" id="2_rwgxs"]
+
+[sub_resource type="Gradient" id="Gradient_k0juu"]
+colors = PackedColorArray(1, 1, 1, 0, 1, 1, 1, 0.521569)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_nnsk1"]
+size = Vector2(60, 60)
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_4wyf3"]
+shader = ExtResource("2_rwgxs")
+shader_parameter/color_deep = Color(0.0371801, 0.0261436, 0.0972792, 1)
+shader_parameter/color_mid = Color(0.201082, 0.112962, 0.266345, 1)
+shader_parameter/color_high = Color(0.363019, 0.11249, 0.57246, 1)
+shader_parameter/world_pos = Vector2(0, 0)
+shader_parameter/speed = 0.157
+
+[sub_resource type="WorldBoundaryShape2D" id="WorldBoundaryShape2D_k0juu"]
+
+[node name="World" type="Node2D"]
+
+[node name="Player" type="CharacterBody2D" parent="."]
+position = Vector2(539, 360)
+script = ExtResource("1_4wyf3")
+metadata/_edit_group_ = true
+
+[node name="TargetLine" type="Line2D" parent="Player"]
+gradient = SubResource("Gradient_k0juu")
+
+[node name="TargetReticle" type="Sprite2D" parent="Player"]
+modulate = Color(1, 1, 1, 0.545098)
+scale = Vector2(0.1, 0.1)
+texture = ExtResource("1_nnsk1")
+
+[node name="Rope" type="Line2D" parent="Player"]
+
+[node name="Sprite2D" type="Sprite2D" parent="Player"]
+scale = Vector2(0.46875, 0.46875)
+texture = ExtResource("1_nnsk1")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Player"]
+shape = SubResource("RectangleShape2D_nnsk1")
+
+[node name="Camera2D" type="Camera2D" parent="Player"]
+process_callback = 0
+limit_left = 0
+limit_right = 1152
+position_smoothing_enabled = true
+position_smoothing_speed = 15.0
+
+[node name="CanvasLayer" type="CanvasLayer" parent="."]
+layer = -6
+
+[node name="Background" type="ColorRect" parent="CanvasLayer"]
+material = SubResource("ShaderMaterial_4wyf3")
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+metadata/_edit_lock_ = true
+
+[node name="Floor" type="StaticBody2D" parent="."]
+position = Vector2(551, 502)
+metadata/_edit_group_ = true
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Floor"]
+shape = SubResource("WorldBoundaryShape2D_k0juu")
+
+[node name="Sprite2D" type="Sprite2D" parent="Floor"]
+position = Vector2(2.00002, 66)
+scale = Vector2(9.35156, 1)
+texture = ExtResource("1_nnsk1")
+
+[node name="Memories" type="Node2D" parent="."]
+
+[node name="Memory" parent="Memories" instance=ExtResource("1_71j4m")]
+position = Vector2(304, 157)
+break_time = 3.5
+
+[node name="Memory2" parent="Memories" instance=ExtResource("1_71j4m")]
+position = Vector2(775, -245)
+move_direction = Vector2(1, 0)
+break_time = 3.5
+
+[node name="Memory3" parent="Memories" instance=ExtResource("1_71j4m")]
+position = Vector2(192, -648)
+move_direction = Vector2(0.5, 0.5)
+is_mirage = true
+break_time = 3.5
+
+[node name="Memory4" parent="Memories" instance=ExtResource("1_71j4m")]
+position = Vector2(918, -1043)
+break_time = 3.5
+
+[node name="Memory5" parent="Memories" instance=ExtResource("1_71j4m")]
+position = Vector2(158, -1450)
+break_time = 3.5
+
+[node name="Memory6" parent="Memories" instance=ExtResource("1_71j4m")]
+position = Vector2(1046, -1729)
+break_time = 3.5
+
+[node name="Memory7" parent="Memories" instance=ExtResource("1_71j4m")]
+position = Vector2(442, -1858)
+is_mirage = true
+break_time = 3.5
+
+[node name="Memory9" parent="Memories" instance=ExtResource("1_71j4m")]
+position = Vector2(225, -2688)
+is_timed = true
+break_time = 3.5
+
+[node name="Memory8" parent="Memories" instance=ExtResource("1_71j4m")]
+position = Vector2(669, -2293)
+is_timed = true
+break_time = 3.5

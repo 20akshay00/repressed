@@ -1,0 +1,28 @@
+[gd_scene load_steps=6 format=3 uid="uid://dib2d8eliqf4h"]
+
+[ext_resource type="Script" uid="uid://bap2hrkd3ttf1" path="res://scripts/memory.gd" id="1_au0oe"]
+[ext_resource type="Shader" uid="uid://hjrdh2gi0set" path="res://assets/shaders/mirage.gdshader" id="2_2c1wl"]
+[ext_resource type="Texture2D" uid="uid://dd5aogd3x20d" path="res://icon.svg" id="2_32l63"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_4wyf3"]
+size = Vector2(127, 126)
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_32l63"]
+shader = ExtResource("2_2c1wl")
+shader_parameter/speed = 2.0
+shader_parameter/frequency = 10.0
+shader_parameter/amplitude = 0.02
+shader_parameter/is_mirage_f = 0.0
+
+[node name="Memory" type="AnimatableBody2D"]
+script = ExtResource("1_au0oe")
+move_direction = Vector2(0.8, 0.2)
+metadata/_edit_group_ = true
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+position = Vector2(-0.5, 0)
+shape = SubResource("RectangleShape2D_4wyf3")
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+material = SubResource("ShaderMaterial_32l63")
+texture = ExtResource("2_32l63")

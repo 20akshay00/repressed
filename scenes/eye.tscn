@@ -1,0 +1,23 @@
+[gd_scene load_steps=4 format=3 uid="uid://cdc3oxgchaeh"]
+
+[ext_resource type="Script" uid="uid://n2i6wtd2n8gt" path="res://scripts/eye.gd" id="1_xbsf0"]
+[ext_resource type="Texture2D" uid="uid://dd5aogd3x20d" path="res://icon.svg" id="2_60o0r"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_60o0r"]
+size = Vector2(757, 69)
+
+[node name="Eye" type="Node2D"]
+script = ExtResource("1_xbsf0")
+
+[node name="Beacon" type="Area2D" parent="."]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Beacon"]
+position = Vector2(368.5, -1.5)
+shape = SubResource("RectangleShape2D_60o0r")
+
+[node name="LightVisual" type="Polygon2D" parent="."]
+
+[node name="RayCast2D" type="RayCast2D" parent="."]
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+texture = ExtResource("2_60o0r")
