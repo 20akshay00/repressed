@@ -1,8 +1,9 @@
+// SHADER
 shader_type canvas_item;
 
-uniform float speed = 4.0;
-uniform float frequency = 20.0;
-uniform float amplitude = 0.2;
+uniform float speed = 2.0;
+uniform float frequency = 10.0;
+uniform float amplitude = 0.02;
 uniform float is_mirage_f = 0.0;
 
 void fragment() {
@@ -10,5 +11,5 @@ void fragment() {
 	uv.x += sin(uv.y * frequency + TIME * speed) * amplitude * is_mirage_f;
 	vec4 tex = texture(TEXTURE, uv);
 	COLOR = vec4(tex.rgb, tex.a * COLOR.a);
-	COLOR.a *= mix(1.0, 0.5, is_mirage_f);
+	COLOR.a *= mix(1.0, 0.4, is_mirage_f);
 }

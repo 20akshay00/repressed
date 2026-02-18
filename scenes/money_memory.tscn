@@ -1,0 +1,30 @@
+[gd_scene load_steps=6 format=3 uid="uid://b4b5vma7qw660"]
+
+[ext_resource type="Script" uid="uid://bap2hrkd3ttf1" path="res://scripts/memory.gd" id="1_wjq4a"]
+[ext_resource type="Shader" uid="uid://hjrdh2gi0set" path="res://assets/shaders/mirage.gdshader" id="2_il0va"]
+[ext_resource type="Texture2D" uid="uid://gciga1ic4nqu" path="res://assets/art/object_money_sign_v1.png" id="3_wjq4a"]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_il0va"]
+radius = 18.3576
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_32l63"]
+shader = ExtResource("2_il0va")
+shader_parameter/speed = 2.0
+shader_parameter/frequency = 10.0
+shader_parameter/amplitude = 0.02
+shader_parameter/is_mirage_f = 0.0
+
+[node name="MoneyMemory" type="AnimatableBody2D"]
+script = ExtResource("1_wjq4a")
+move_direction = Vector2(0.8, 0.2)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+position = Vector2(-1, 0)
+rotation = 0.623083
+shape = SubResource("CircleShape2D_il0va")
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+material = SubResource("ShaderMaterial_32l63")
+scale = Vector2(1.5, 1.5)
+texture = ExtResource("3_wjq4a")
+metadata/_edit_lock_ = true

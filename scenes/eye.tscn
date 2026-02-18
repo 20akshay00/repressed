@@ -1,7 +1,9 @@
-[gd_scene load_steps=4 format=3 uid="uid://cdc3oxgchaeh"]
+[gd_scene load_steps=6 format=3 uid="uid://cdc3oxgchaeh"]
 
 [ext_resource type="Script" uid="uid://n2i6wtd2n8gt" path="res://scripts/eye.gd" id="1_xbsf0"]
-[ext_resource type="Texture2D" uid="uid://dd5aogd3x20d" path="res://icon.svg" id="2_60o0r"]
+[ext_resource type="Texture2D" uid="uid://cdf20asty3uby" path="res://assets/art/eye/normal_eye_body_v1.png" id="2_60o0r"]
+[ext_resource type="Texture2D" uid="uid://c2juwp7jsvnhe" path="res://assets/art/eye/normal_eye_iris_v1.png" id="3_hrmh8"]
+[ext_resource type="Texture2D" uid="uid://bl2d2qx2m5q6c" path="res://assets/art/eye/normal_eyelids_v1.png" id="4_7wf7k"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_60o0r"]
 size = Vector2(757, 69)
@@ -19,5 +21,14 @@ shape = SubResource("RectangleShape2D_60o0r")
 
 [node name="RayCast2D" type="RayCast2D" parent="."]
 
-[node name="Sprite2D" type="Sprite2D" parent="."]
+[node name="EyeBody" type="Sprite2D" parent="."]
+scale = Vector2(3, 3)
 texture = ExtResource("2_60o0r")
+
+[node name="Iris" type="Sprite2D" parent="."]
+scale = Vector2(3, 3)
+texture = ExtResource("3_hrmh8")
+
+[node name="Eyelids" type="Sprite2D" parent="."]
+scale = Vector2(3, 3)
+texture = ExtResource("4_7wf7k")

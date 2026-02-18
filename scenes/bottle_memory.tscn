@@ -1,0 +1,29 @@
+[gd_scene load_steps=6 format=3 uid="uid://de3wgv32fn20b"]
+
+[ext_resource type="Script" uid="uid://bap2hrkd3ttf1" path="res://scripts/memory.gd" id="1_74bsa"]
+[ext_resource type="Shader" uid="uid://hjrdh2gi0set" path="res://assets/shaders/mirage.gdshader" id="2_fjhdo"]
+[ext_resource type="Texture2D" uid="uid://dwunwc8h12roe" path="res://assets/art/object_bottle_v1.png" id="3_a5y35"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_4wyf3"]
+size = Vector2(104, 103)
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_32l63"]
+shader = ExtResource("2_fjhdo")
+shader_parameter/speed = 2.0
+shader_parameter/frequency = 10.0
+shader_parameter/amplitude = 0.02
+shader_parameter/is_mirage_f = 0.0
+
+[node name="BottleMemory" type="AnimatableBody2D"]
+script = ExtResource("1_74bsa")
+move_direction = Vector2(0.8, 0.2)
+metadata/_edit_group_ = true
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+position = Vector2(-1, 3.5)
+shape = SubResource("RectangleShape2D_4wyf3")
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+material = SubResource("ShaderMaterial_32l63")
+scale = Vector2(1.5, 1.5)
+texture = ExtResource("3_a5y35")

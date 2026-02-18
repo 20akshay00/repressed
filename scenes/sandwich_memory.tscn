@@ -1,0 +1,30 @@
+[gd_scene load_steps=6 format=3 uid="uid://dnhcfo82u1qn8"]
+
+[ext_resource type="Script" uid="uid://bap2hrkd3ttf1" path="res://scripts/memory.gd" id="1_5wjto"]
+[ext_resource type="Shader" uid="uid://hjrdh2gi0set" path="res://assets/shaders/mirage.gdshader" id="2_tpegx"]
+[ext_resource type="Texture2D" uid="uid://cf3gs0s1bhfrh" path="res://assets/art/object_sandwich_v1.png" id="3_5wjto"]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_tpegx"]
+radius = 22.6716
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_32l63"]
+shader = ExtResource("2_tpegx")
+shader_parameter/speed = 2.0
+shader_parameter/frequency = 10.0
+shader_parameter/amplitude = 0.02
+shader_parameter/is_mirage_f = 0.0
+
+[node name="SandwichMemory" type="AnimatableBody2D"]
+script = ExtResource("1_5wjto")
+move_direction = Vector2(0.8, 0.2)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+position = Vector2(-9.53674e-07, -2)
+rotation = 0.623083
+shape = SubResource("CircleShape2D_tpegx")
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+material = SubResource("ShaderMaterial_32l63")
+scale = Vector2(1.5, 1.5)
+texture = ExtResource("3_5wjto")
+metadata/_edit_lock_ = true

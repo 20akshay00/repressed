@@ -1,19 +1,21 @@
 extends CharacterBody2D
+class_name Player
 
 @export_group("Physics")
 @export var gravity := 2600.0
-@export var fall_gravity_mult := 0.8
-@export var release_boost := 1.1
+@export var fall_gravity_mult := 0.6
+@export var release_boost := 1.2
 @export var whip_power := 0.9
-@export var grace_time := 0.8
+@export var grace_time := 0.7
 @export var max_velocity := 2000.0
+@export var air_steer := 600.0
 
 @export_group("Pendulum")
 @export var max_dist := 1100.0
 @export var min_length := 50.0
-@export var max_length := 300.0
+@export var max_length := 350.0
 @export var reel_speed := 1100.0
-@export var manual_reel_speed := 100.0
+@export var manual_reel_speed := 150.0
 
 var is_hooked := false
 var hook_node: Node2D = null
@@ -29,6 +31,9 @@ var grace_timer := 0.0
 @onready var target_reticle: Node2D = $TargetReticle
 @onready var camera: Camera2D = $Camera2D
 @onready var bg_material: ShaderMaterial = $"../CanvasLayer/Background".material
+@onready var sprite: Sprite2D = $Sprite2D
+
+var external_acceleration := Vector2.ZERO
 
 func _physics_process(delta: float) -> void:
 	var mouse_vel = (get_viewport().get_mouse_position() - last_mouse_pos)
@@ -42,18 +47,19 @@ func _physics_process(delta: float) -> void:
 		grace_timer -= delta
 		if grace_timer > 0 or velocity.y < 0:
 			current_gravity *= fall_gravity_mult
+			var steer_dir = sign(get_local_mouse_position().x)
+			velocity.x += steer_dir * air_steer * delta
 	
 	velocity.y += current_gravity * delta
+	velocity += external_acceleration * delta
+	var target_rot = sprite.rotation
 
 	if is_hooked and is_instance_valid(hook_node):
-		if hook_node.has_method("set_grabbed"):
-			hook_node.set_grabbed()
-			
+		if hook_node.has_method("set_grabbed"): hook_node.set_grabbed()
 		if hook_node.collision_layer == 0:
 			is_hooked = false
 			return
 		
-		grace_timer = grace_time 
 		var anchor = hook_node.to_global(hook_offset)
 		var anchor_vel = (anchor - last_anchor_pos) / delta
 		last_anchor_pos = anchor
@@ -69,6 +75,8 @@ func _physics_process(delta: float) -> void:
 		var to_anchor = (anchor - global_position).normalized()
 		var tangent = Vector2(-to_anchor.y, to_anchor.x)
 		
+		target_rot = to_anchor.angle() - PI/2
+		
 		if rope_length < prev_length and velocity.length() > 10.0:
 			velocity += tangent * (prev_length - rope_length) * 15.0
 
@@ -77,37 +85,35 @@ func _physics_process(delta: float) -> void:
 		var dist = global_position.distance_to(anchor)
 		if dist > rope_length:
 			global_position += to_anchor * (dist - rope_length)
-			
 			var rel_vel = velocity - anchor_vel
-			var dot = rel_vel.dot(to_anchor)
-			if dot < 0:
-				velocity = (rel_vel - to_anchor * dot) + anchor_vel
+			if rel_vel.dot(to_anchor) < 0:
+				velocity = (rel_vel - to_anchor * rel_vel.dot(to_anchor)) + anchor_vel
 		
 		rope.width = move_toward(rope.width, 4.0 + clamp(abs(mouse_vel.length() * 0.1), 0, 12), delta * 50)
 	else:
 		velocity.x = lerp(velocity.x, 0.0, delta * 1.5)
 		rope.width = move_toward(rope.width, 0, delta * 30)
-
-	if velocity.length() > max_velocity:
-		velocity = velocity.limit_length(max_velocity)
+		if is_on_floor(): target_rot = 0.0
+		elif velocity.length() > 50.0: target_rot = velocity.angle() + PI/2
+	
+	sprite.rotation = lerp_angle(sprite.rotation, target_rot, delta * 10.0)
+	if velocity.length() > max_velocity: velocity = velocity.limit_length(max_velocity)
 
 	move_and_slide()
-	
-	if bg_material:
-		bg_material.set_shader_parameter("world_pos", camera.get_screen_center_position())
+	if bg_material: bg_material.set_shader_parameter("world_pos", camera.get_screen_center_position())
 
 func fire_hook():
 	var dir = global_position.direction_to(get_global_mouse_position())
 	var query = PhysicsRayQueryParameters2D.create(global_position, global_position + dir * max_dist)
 	query.exclude = [get_rid()]
 	var res = get_world_2d().direct_space_state.intersect_ray(query)
-	
 	if res:
 		is_hooked = true
 		hook_node = res.collider
 		hook_offset = hook_node.to_local(res.position)
 		last_anchor_pos = res.position
 		rope_length = global_position.distance_to(res.position)
+		grace_timer = 0
 
 func release_hook():
 	if is_hooked:
@@ -118,9 +124,12 @@ func release_hook():
 func _process(delta: float) -> void:
 	rope.visible = is_hooked
 	if is_hooked and is_instance_valid(hook_node):
-		rope.points = [Vector2.ZERO, to_local(hook_node.to_global(hook_offset))]
+		var anchor = hook_node.to_global(hook_offset)
+		rope.points = [Vector2.ZERO, to_local(anchor)]
 		target_line.visible = false
-		target_reticle.visible = false
+		target_reticle.visible = true
+		target_reticle.global_position = anchor
+		target_reticle.global_rotation = (hook_node.global_position - anchor).angle()
 	else:
 		update_preview_indicator(delta)
 
@@ -138,11 +147,12 @@ func update_preview_indicator(delta: float) -> void:
 	
 	var hit_pos = res.position if res else ray_end
 	var local_hit = to_local(hit_pos)
-	
 	target_line.add_point(local_hit)
 	target_reticle.position = local_hit
 	
 	var alpha = 0.6 if res else 0.1
 	target_line.modulate.a = move_toward(target_line.modulate.a, alpha, delta * 4)
 	target_reticle.modulate.a = move_toward(target_reticle.modulate.a, alpha, delta * 4)
-	target_reticle.rotation += delta * (10.0 if res else 2.0)
+	
+	if res: target_reticle.global_rotation = (res.collider.global_position - res.position).angle()
+	else: target_reticle.rotation += delta * 2.0

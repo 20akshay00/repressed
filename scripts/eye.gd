@@ -12,7 +12,7 @@ var time := 0.0
 
 @onready var beacon = $Beacon
 @onready var ray = $RayCast2D
-@onready var visual = $Beacon/Visual
+@onready var visual = $LightVisual
 
 func _ready() -> void:
 	timer = search_interval
@@ -22,8 +22,8 @@ func _process(delta: float) -> void:
 	time += delta
 	var cam = get_viewport().get_camera_2d()
 	if cam:
-		global_position.y = lerp(global_position.y, cam.get_screen_center_position().y - 350, follow_speed * delta)
-		global_position.x = cam.get_screen_center_position().x
+		global_position.y = lerp(global_position.y, cam.get_screen_center_position().y - 150, follow_speed * delta)
+		global_position.x = cam.get_screen_center_position().x - 350
 
 	timer -= delta
 	match state:
