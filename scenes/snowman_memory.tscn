@@ -16,8 +16,8 @@ shader_parameter/amplitude = 0.02
 shader_parameter/is_mirage_f = 0.0
 
 [node name="SnowmanMemory" type="AnimatableBody2D"]
+collision_layer = 5
 script = ExtResource("1_i24hx")
-move_direction = Vector2(0.8, 0.2)
 metadata/_edit_group_ = true
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]

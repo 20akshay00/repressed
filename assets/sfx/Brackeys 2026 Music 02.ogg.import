@@ -1,0 +1,19 @@
+[remap]
+
+importer="oggvorbisstr"
+type="AudioStreamOggVorbis"
+uid="uid://b474pgv5skdkl"
+path="res://.godot/imported/Brackeys 2026 Music 02.ogg-8109747a3f72a040ba8a24d195fe372f.oggvorbisstr"
+
+[deps]
+
+source_file="res://assets/sfx/Brackeys 2026 Music 02.ogg"
+dest_files=["res://.godot/imported/Brackeys 2026 Music 02.ogg-8109747a3f72a040ba8a24d195fe372f.oggvorbisstr"]
+
+[params]
+
+loop=true
+loop_offset=0
+bpm=0
+beat_count=0
+bar_beats=4

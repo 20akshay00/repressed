@@ -1,0 +1,19 @@
+[remap]
+
+importer="oggvorbisstr"
+type="AudioStreamOggVorbis"
+uid="uid://cd80umga4fi00"
+path="res://.godot/imported/Eye shoot 01.ogg-02d27427a2900934c10da4c26bda13fa.oggvorbisstr"
+
+[deps]
+
+source_file="res://assets/sfx/Eye shoot 01.ogg"
+dest_files=["res://.godot/imported/Eye shoot 01.ogg-02d27427a2900934c10da4c26bda13fa.oggvorbisstr"]
+
+[params]
+
+loop=false
+loop_offset=0
+bpm=0
+beat_count=0
+bar_beats=4

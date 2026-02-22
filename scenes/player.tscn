@@ -3,7 +3,7 @@
 [ext_resource type="Script" uid="uid://lnim22gligur" path="res://scripts/player.gd" id="1_g2els"]
 [ext_resource type="Texture2D" uid="uid://cogt6c2x1kflt" path="res://assets/art/hook_v1.png" id="2_dqkch"]
 [ext_resource type="Texture2D" uid="uid://b1akiu6rmondf" path="res://assets/art/rope_v1.png" id="3_dqkch"]
-[ext_resource type="Texture2D" uid="uid://cq055ntxyen1s" path="res://assets/art/character_north_v1.png" id="3_qhqgy"]
+[ext_resource type="Texture2D" uid="uid://cv7r56ttf2h7h" path="res://assets/art/spirit+character_v2.png" id="4_dqkch"]
 
 [sub_resource type="Gradient" id="Gradient_k0juu"]
 colors = PackedColorArray(1, 1, 1, 0, 1, 1, 1, 0.521569)
@@ -19,17 +19,17 @@ metadata/_edit_group_ = true
 gradient = SubResource("Gradient_k0juu")
 
 [node name="TargetReticle" type="Sprite2D" parent="."]
-modulate = Color(1, 1, 1, 0.545098)
 z_index = 5
-scale = Vector2(1.5, 1.5)
+scale = Vector2(3, 3)
 texture = ExtResource("2_dqkch")
 
 [node name="Rope" type="Line2D" parent="."]
 texture = ExtResource("3_dqkch")
 
 [node name="Sprite2D" type="Sprite2D" parent="."]
+z_index = 2
 scale = Vector2(2, 2)
-texture = ExtResource("3_qhqgy")
+texture = ExtResource("4_dqkch")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
 shape = SubResource("RectangleShape2D_nnsk1")

@@ -1,0 +1,19 @@
+[remap]
+
+importer="oggvorbisstr"
+type="AudioStreamOggVorbis"
+uid="uid://b4llrhqutnw34"
+path="res://.godot/imported/Eye laser 01.ogg-c4d0ee8de69aab535a99f3e5732dc58d.oggvorbisstr"
+
+[deps]
+
+source_file="res://assets/sfx/Eye laser 01.ogg"
+dest_files=["res://.godot/imported/Eye laser 01.ogg-c4d0ee8de69aab535a99f3e5732dc58d.oggvorbisstr"]
+
+[params]
+
+loop=false
+loop_offset=0
+bpm=0
+beat_count=0
+bar_beats=4

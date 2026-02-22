@@ -13,10 +13,18 @@ config_version=5
 config/name="BrackeysJam26"
 run/main_scene="uid://hmlxati7afqi"
 config/features=PackedStringArray("4.4", "Forward Plus")
+run/max_fps=60
 config/icon="res://icon.svg"
+
+[autoload]
+
+AudioManager="*res://scenes/audio_manager.tscn"
+EventManager="*res://scripts/event_manager.gd"
 
 [display]
 
+window/size/viewport_width=720
+window/size/viewport_height=1024
 window/stretch/mode="canvas_items"
 
 [input]
@@ -44,3 +52,17 @@ retract={
 , Object(InputEventMouseButton,"resource_local_to_scene":false,"resource_name":"","device":-1,"window_id":0,"alt_pressed":false,"shift_pressed":false,"ctrl_pressed":false,"meta_pressed":false,"button_mask":0,"position":Vector2(0, 0),"global_position":Vector2(0, 0),"factor":1.0,"button_index":7,"canceled":false,"pressed":false,"double_click":false,"script":null)
 ]
 }
+hop={
+"deadzone": 0.2,
+"events": [Object(InputEventMouseButton,"resource_local_to_scene":false,"resource_name":"","device":-1,"window_id":0,"alt_pressed":false,"shift_pressed":false,"ctrl_pressed":false,"meta_pressed":false,"button_mask":0,"position":Vector2(0, 0),"global_position":Vector2(0, 0),"factor":1.0,"button_index":2,"canceled":false,"pressed":false,"double_click":false,"script":null)
+]
+}
+
+[physics]
+
+common/physics_interpolation=true
+
+[rendering]
+
+textures/canvas_textures/default_texture_filter=0
+textures/lossless_compression/force_png=true

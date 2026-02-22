@@ -15,8 +15,8 @@ shader_parameter/amplitude = 0.02
 shader_parameter/is_mirage_f = 0.0
 
 [node name="SandwichMemory" type="AnimatableBody2D"]
+collision_layer = 5
 script = ExtResource("1_5wjto")
-move_direction = Vector2(0.8, 0.2)
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
 position = Vector2(-9.53674e-07, -2)

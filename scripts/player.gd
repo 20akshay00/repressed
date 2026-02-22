@@ -3,6 +3,7 @@ class_name Player
 
 @export_group("Physics")
 @export var gravity := 2600.0
+@export var jump_force := 800.0
 @export var fall_gravity_mult := 0.6
 @export var release_boost := 1.2
 @export var whip_power := 0.9
@@ -30,10 +31,14 @@ var grace_timer := 0.0
 @onready var target_line: Line2D = $TargetLine
 @onready var target_reticle: Node2D = $TargetReticle
 @onready var camera: Camera2D = $Camera2D
-@onready var bg_material: ShaderMaterial = $"../CanvasLayer/Background".material
 @onready var sprite: Sprite2D = $Sprite2D
 
 var external_acceleration := Vector2.ZERO
+
+func _ready() -> void:
+	rope.top_level = true
+	target_line.top_level = true
+	target_reticle.top_level = true
 
 func _physics_process(delta: float) -> void:
 	var mouse_vel = (get_viewport().get_mouse_position() - last_mouse_pos)
@@ -44,6 +49,9 @@ func _physics_process(delta: float) -> void:
 
 	var current_gravity = gravity
 	if not is_hooked:
+		if is_on_floor() and Input.is_action_just_pressed("hop"):
+			velocity.y = -jump_force
+			
 		grace_timer -= delta
 		if grace_timer > 0 or velocity.y < 0:
 			current_gravity *= fall_gravity_mult
@@ -78,7 +86,13 @@ func _physics_process(delta: float) -> void:
 		target_rot = to_anchor.angle() - PI/2
 		
 		if rope_length < prev_length and velocity.length() > 10.0:
-			velocity += tangent * (prev_length - rope_length) * 15.0
+			var boost_scaler = clamp(rope_length / 200.0, 0.2, 1.0)
+			velocity += tangent * (prev_length - rope_length) * 15.0 * boost_scaler
+			
+			if rope_length < 150.0:
+				var tangential_component = velocity.dot(tangent)
+				var damp_strength = 1.0 - (rope_length / 150.0)
+				velocity -= tangent * tangential_component * damp_strength * delta * 20.0
 
 		velocity += tangent * mouse_vel.dot(tangent) * whip_power
 
@@ -100,12 +114,13 @@ func _physics_process(delta: float) -> void:
 	if velocity.length() > max_velocity: velocity = velocity.limit_length(max_velocity)
 
 	move_and_slide()
-	if bg_material: bg_material.set_shader_parameter("world_pos", camera.get_screen_center_position())
 
 func fire_hook():
 	var dir = global_position.direction_to(get_global_mouse_position())
 	var query = PhysicsRayQueryParameters2D.create(global_position, global_position + dir * max_dist)
 	query.exclude = [get_rid()]
+	query.collision_mask = 4 # Layer 3
+	
 	var res = get_world_2d().direct_space_state.intersect_ray(query)
 	if res:
 		is_hooked = true
@@ -114,9 +129,14 @@ func fire_hook():
 		last_anchor_pos = res.position
 		rope_length = global_position.distance_to(res.position)
 		grace_timer = 0
+		if res is Eye:
+			AudioManager.play_effect(AudioManager.eye_hook_sfx, randf_range(0.9, 1.1))
+		else:
+			AudioManager.play_effect(AudioManager.hook_sfx, randf_range(0.9, 1.1))
 
 func release_hook():
 	if is_hooked:
+		AudioManager.play_effect(AudioManager.unhook_sfx, randf_range(0.9, 1.1))
 		velocity *= release_boost
 		grace_timer = grace_time
 	is_hooked = false
@@ -125,11 +145,11 @@ func _process(delta: float) -> void:
 	rope.visible = is_hooked
 	if is_hooked and is_instance_valid(hook_node):
 		var anchor = hook_node.to_global(hook_offset)
-		rope.points = [Vector2.ZERO, to_local(anchor)]
+		rope.points = [global_position, anchor]
 		target_line.visible = false
 		target_reticle.visible = true
-		target_reticle.global_position = anchor
-		target_reticle.global_rotation = (hook_node.global_position - anchor).angle()
+		target_reticle.global_position = anchor + 10 * (hook_node.global_position - anchor).normalized()
+		target_reticle.global_rotation = (hook_node.global_position - anchor).angle() - PI/2
 	else:
 		update_preview_indicator(delta)
 
@@ -138,21 +158,23 @@ func update_preview_indicator(delta: float) -> void:
 	var ray_end = global_position + (dir * max_dist)
 	var query = PhysicsRayQueryParameters2D.create(global_position, ray_end)
 	query.exclude = [get_rid()]
+	query.collision_mask = 4 # Layer 3
+	
 	var res = get_world_2d().direct_space_state.intersect_ray(query)
 	
 	target_line.visible = true
 	target_reticle.visible = true
 	target_line.clear_points()
-	target_line.add_point(Vector2.ZERO)
 	
 	var hit_pos = res.position if res else ray_end
-	var local_hit = to_local(hit_pos)
-	target_line.add_point(local_hit)
-	target_reticle.position = local_hit
+	
+	target_line.add_point(global_position)
+	target_line.add_point(hit_pos)
+	target_reticle.global_position = hit_pos
 	
 	var alpha = 0.6 if res else 0.1
 	target_line.modulate.a = move_toward(target_line.modulate.a, alpha, delta * 4)
 	target_reticle.modulate.a = move_toward(target_reticle.modulate.a, alpha, delta * 4)
 	
-	if res: target_reticle.global_rotation = (res.collider.global_position - res.position).angle()
+	if res: target_reticle.global_rotation = (res.collider.global_position - res.position).angle() - PI/2
 	else: target_reticle.rotation += delta * 2.0

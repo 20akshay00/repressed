@@ -1,0 +1,38 @@
+[gd_scene load_steps=7 format=3 uid="uid://co6iqyrj53vs"]
+
+[ext_resource type="Script" uid="uid://bwtspnjbs2ex8" path="res://scripts/floor.gd" id="1_3lc0u"]
+[ext_resource type="Texture2D" uid="uid://dqh4tmeof63hv" path="res://assets/art/bg/ground_background_v1.png" id="2_7525o"]
+[ext_resource type="Texture2D" uid="uid://bfpw3wxxta5o0" path="res://assets/art/bg/ground_v1.png" id="3_poy5y"]
+[ext_resource type="Texture2D" uid="uid://croeqotbtbhbs" path="res://assets/art/bg/ground_foreground_v1.png" id="4_1bx2v"]
+
+[sub_resource type="WorldBoundaryShape2D" id="WorldBoundaryShape2D_o8fc1"]
+distance = -2.0
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_3lc0u"]
+size = Vector2(717, 115)
+
+[node name="Floor" type="StaticBody2D"]
+script = ExtResource("1_3lc0u")
+metadata/_edit_group_ = true
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+position = Vector2(0, -3)
+shape = SubResource("WorldBoundaryShape2D_o8fc1")
+one_way_collision = true
+
+[node name="Background" type="Sprite2D" parent="."]
+texture = ExtResource("2_7525o")
+
+[node name="Ground" type="Sprite2D" parent="Background"]
+texture = ExtResource("3_poy5y")
+
+[node name="Foreground" type="Sprite2D" parent="Background/Ground"]
+texture = ExtResource("4_1bx2v")
+
+[node name="Area2D" type="Area2D" parent="."]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Area2D"]
+position = Vector2(0.5, 59.5)
+shape = SubResource("RectangleShape2D_3lc0u")
+
+[connection signal="body_entered" from="Area2D" to="." method="_on_area_2d_body_entered"]

@@ -1,91 +1,107 @@
+@tool
 extends AnimatableBody2D
 class_name Memory
 
-@export var move_direction := Vector2.ZERO
-@export var amplitude := 300.0
-@export var speed := 0.4
-@export var smooth_speed := 3.0
-@export var prob_mirage := 0.2
-@export var prob_timed := 0.2
-@export var break_time := 4.5
+enum MemoryType { STANDARD, REPELLING }
 
-var is_mirage := false
-var is_timed := false
-var is_active := true
-var is_grabbed := false
-var time := randf() * 100.0
+@export_group("Settings")
+@export var type: MemoryType = MemoryType.STANDARD :
+	set(val):
+		type = val
+		queue_redraw()
+
+@export var duration := 2.0
+@export var rotation_speed := 1.0
+@export var repel_force := 1500.0
+@export var repel_radius := 350.0
+
 var rotation_accum := randf() * TAU
-var hook_timer := 0.0
-
-@onready var initial_pos := global_position
-@onready var current_pos := global_position
-@onready var init_scale := scale
-@onready var original_layer := collision_layer
+var movement_tween: Tween
+var notifier: VisibleOnScreenNotifier2D
 
 func _ready():
-	if move_direction == Vector2.ZERO: 
-		move_direction = Vector2.RIGHT.rotated(randf() * TAU)
+	if Engine.is_editor_hint(): return
 	
-	var roll = randf()
-	is_mirage = roll < prob_mirage
-	is_timed = !is_mirage and roll < (prob_mirage + prob_timed)
-	
-	_setup_material()
-	
-	if is_mirage:
-		collision_layer = 0
-		original_layer = 0
+	_setup_visibility_optimization()
+	_start_movement()
 
-func _setup_material():
-	var target_node: CanvasItem = self
-	var mat = material as ShaderMaterial
+	set_collision_layer_value(1, false)
+	set_collision_mask_value(1, false)
+
+func _setup_visibility_optimization():
+	notifier = VisibleOnScreenNotifier2D.new()
 	
-	if !mat:
-		for c in get_children():
-			if c is CanvasItem and c.material is ShaderMaterial:
-				target_node = c
-				mat = c.material
-				break
+	var target_node = get_node_or_null("Marker2D")
+	# Fallback to a 200px box if no target or repel radius is set
+	var max_dist = max(repel_radius, 200.0) 
 	
-	if !mat: return
+	if target_node:
+		max_dist = max(max_dist, target_node.position.length() + 100.0)
 	
-	var new_mat = mat.duplicate()
-	target_node.material = new_mat
-	new_mat.set_shader_parameter("is_mirage_f", 1.0 if is_mirage else 0.0)
+	notifier.rect = Rect2(-max_dist, -max_dist, max_dist * 2.0, max_dist * 2.0)
+	
+	notifier.screen_entered.connect(_on_screen_entered)
+	notifier.screen_exited.connect(_on_screen_exited)
+	add_child(notifier)
+	
+	if not notifier.is_on_screen():
+		set_physics_process(false)
+
+func _on_screen_entered():
+	set_physics_process(true)
+	if movement_tween:
+		movement_tween.play()
+
+func _on_screen_exited():
+	set_physics_process(false)
+	if movement_tween:
+		movement_tween.pause()
+
+func _start_movement():
+	var target_node = get_node_or_null("Marker2D")
+	if not target_node: return
+	
+	var start_pos = global_position
+	var end_pos = target_node.global_position
+	target_node.hide()
+	
+	movement_tween = create_tween().set_loops().set_process_mode(Tween.TWEEN_PROCESS_PHYSICS)
+	movement_tween.tween_property(self, "global_position", end_pos, duration).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
+	movement_tween.tween_property(self, "global_position", start_pos, duration).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
+	
+	var random_phase = randf() * (duration * 2.0)
+	movement_tween.custom_step(random_phase)
+	
+	if notifier and not notifier.is_on_screen():
+		movement_tween.pause()
 
 func _physics_process(delta):
-	time += delta
-	_process_timed_logic(delta)
+	if Engine.is_editor_hint(): return
 	
-	var target = initial_pos + (move_direction.normalized() * sin(time * speed) * amplitude)
-	current_pos = current_pos.lerp(target, delta * smooth_speed)
+	# Rotation in-game
+	rotation_accum += delta * rotation_speed
+	rotation = rotation_accum
 	
-	rotation_accum += delta
-	global_transform = Transform2D(rotation_accum, current_pos).scaled(init_scale)
-	is_grabbed = false
+	if type == MemoryType.REPELLING:
+		var player = get_tree().get_first_node_in_group("player")
+		if player and "velocity" in player:
+			var dist = global_position.distance_to(player.global_position)
+			if dist < repel_radius:
+				var dir = global_position.direction_to(player.global_position)
+				var strength = (1.0 - (dist / repel_radius)) * repel_force
+				player.velocity += dir * strength * delta
 
-func _process_timed_logic(delta):
-	if not is_timed: return
-	
-	if not is_active:
-		hook_timer = move_toward(hook_timer, 0.0, delta * 0.5)
-		modulate.a = 1.0 - (hook_timer / break_time)
-		if hook_timer <= 0:
-			is_active = true
-			collision_layer = original_layer
-		return
+func _draw():
+	if Engine.is_editor_hint():
+		var target_node = get_node_or_null("Marker2D")
+		if target_node:
+			var color = Color.WHITE if type == MemoryType.STANDARD else Color.RED
+			draw_line(Vector2.ZERO, to_local(target_node.global_position), color, 2.0)
+			draw_circle(to_local(target_node.global_position), 5.0, color)
 
-	if is_grabbed:
-		hook_timer = min(hook_timer + delta, break_time)
-		if hook_timer >= break_time:
-			is_active = false
-			collision_layer = 0
-			modulate.a = 0
-	else:
-		hook_timer = move_toward(hook_timer, 0.0, delta * 0.8)
-	
-	if is_active:
-		modulate.a = 1.0 - (hook_timer / break_time) * 0.8
+func _process(delta):
+	if Engine.is_editor_hint():
+		queue_redraw()
 
 func set_grabbed():
-	if is_active: is_grabbed = true
+	pass

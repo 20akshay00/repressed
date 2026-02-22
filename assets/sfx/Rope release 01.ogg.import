@@ -1,0 +1,19 @@
+[remap]
+
+importer="oggvorbisstr"
+type="AudioStreamOggVorbis"
+uid="uid://cxseh6e08dgw8"
+path="res://.godot/imported/Rope release 01.ogg-fe8538a759143357c0c98e4b02efe2ce.oggvorbisstr"
+
+[deps]
+
+source_file="res://assets/sfx/Rope release 01.ogg"
+dest_files=["res://.godot/imported/Rope release 01.ogg-fe8538a759143357c0c98e4b02efe2ce.oggvorbisstr"]
+
+[params]
+
+loop=false
+loop_offset=0
+bpm=0
+beat_count=0
+bar_beats=4

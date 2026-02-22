@@ -1,0 +1,19 @@
+[remap]
+
+importer="oggvorbisstr"
+type="AudioStreamOggVorbis"
+uid="uid://c17728co4tir2"
+path="res://.godot/imported/Brackeys 2026 Music 02 vinyl partial drums.ogg-763eac9c8aa6aa0f91be76c6aa860d54.oggvorbisstr"
+
+[deps]
+
+source_file="res://assets/sfx/Brackeys 2026 Music 02 vinyl partial drums.ogg"
+dest_files=["res://.godot/imported/Brackeys 2026 Music 02 vinyl partial drums.ogg-763eac9c8aa6aa0f91be76c6aa860d54.oggvorbisstr"]
+
+[params]
+
+loop=true
+loop_offset=0
+bpm=0
+beat_count=0
+bar_beats=4

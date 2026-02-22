@@ -1,0 +1,19 @@
+[remap]
+
+importer="oggvorbisstr"
+type="AudioStreamOggVorbis"
+uid="uid://ewkexp5mbc7k"
+path="res://.godot/imported/Brackeys 2026 Music 02 vinyl no drums.ogg-f805704baa540a716c74ed13be6db980.oggvorbisstr"
+
+[deps]
+
+source_file="res://assets/sfx/Brackeys 2026 Music 02 vinyl no drums.ogg"
+dest_files=["res://.godot/imported/Brackeys 2026 Music 02 vinyl no drums.ogg-f805704baa540a716c74ed13be6db980.oggvorbisstr"]
+
+[params]
+
+loop=true
+loop_offset=0
+bpm=0
+beat_count=0
+bar_beats=4

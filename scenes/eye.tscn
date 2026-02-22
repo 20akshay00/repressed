@@ -1,15 +1,34 @@
-[gd_scene load_steps=6 format=3 uid="uid://cdc3oxgchaeh"]
+[gd_scene load_steps=14 format=3 uid="uid://cdc3oxgchaeh"]
 
 [ext_resource type="Script" uid="uid://n2i6wtd2n8gt" path="res://scripts/eye.gd" id="1_xbsf0"]
 [ext_resource type="Texture2D" uid="uid://cdf20asty3uby" path="res://assets/art/eye/normal_eye_body_v1.png" id="2_60o0r"]
 [ext_resource type="Texture2D" uid="uid://c2juwp7jsvnhe" path="res://assets/art/eye/normal_eye_iris_v1.png" id="3_hrmh8"]
 [ext_resource type="Texture2D" uid="uid://bl2d2qx2m5q6c" path="res://assets/art/eye/normal_eyelids_v1.png" id="4_7wf7k"]
+[ext_resource type="Texture2D" uid="uid://dq2fhwnjo22r0" path="res://assets/art/eye/closed_eyelid_v1.png" id="5_m25an"]
+[ext_resource type="Texture2D" uid="uid://d3vuv468ur3en" path="res://assets/art/eye/enraged_eye_body_v1.png" id="6_yf4me"]
+[ext_resource type="Texture2D" uid="uid://cef5p1ud5460o" path="res://assets/art/eye/enraged_eye_iris_v1.png" id="7_npxln"]
+[ext_resource type="Texture2D" uid="uid://bksged03f1dbt" path="res://assets/art/eye/enraged_eyelids_v1.png" id="8_waywy"]
+[ext_resource type="AudioStream" uid="uid://c2lt3mmeqrjth" path="res://assets/sfx/Eye aim 01.ogg" id="9_yf4me"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_60o0r"]
 size = Vector2(757, 69)
 
-[node name="Eye" type="Node2D"]
+[sub_resource type="Gradient" id="Gradient_hrmh8"]
+offsets = PackedFloat32Array(0, 0.990268)
+colors = PackedColorArray(1, 1, 1, 0, 1, 1, 1, 0.321569)
+
+[sub_resource type="GradientTexture1D" id="GradientTexture1D_7wf7k"]
+gradient = SubResource("Gradient_hrmh8")
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_hrmh8"]
+radius = 48.0937
+
+[node name="Eye" type="CharacterBody2D"]
+z_index = 100
+collision_layer = 4
+collision_mask = 0
 script = ExtResource("1_xbsf0")
+stun_duration = 13.0
 
 [node name="Beacon" type="Area2D" parent="."]
 
@@ -18,6 +37,9 @@ position = Vector2(368.5, -1.5)
 shape = SubResource("RectangleShape2D_60o0r")
 
 [node name="LightVisual" type="Polygon2D" parent="."]
+color = Color(0.61, 0.243187, 0.1098, 1)
+texture = SubResource("GradientTexture1D_7wf7k")
+polygon = PackedVector2Array(0, 0, 2000, 600, 2000, 600)
 
 [node name="RayCast2D" type="RayCast2D" parent="."]
 
@@ -34,3 +56,31 @@ texture = ExtResource("3_hrmh8")
 [node name="Eyelids" type="Sprite2D" parent="Sprites"]
 scale = Vector2(3, 3)
 texture = ExtResource("4_7wf7k")
+
+[node name="EnragedSprites" type="Node2D" parent="."]
+
+[node name="Body" type="Sprite2D" parent="EnragedSprites"]
+clip_children = 2
+scale = Vector2(3, 3)
+texture = ExtResource("6_yf4me")
+
+[node name="Iris" type="Sprite2D" parent="EnragedSprites/Body"]
+texture = ExtResource("7_npxln")
+
+[node name="Eyelids" type="Sprite2D" parent="EnragedSprites"]
+scale = Vector2(3, 3)
+texture = ExtResource("8_waywy")
+
+[node name="GazeArea" type="Area2D" parent="."]
+
+[node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="GazeArea"]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource("CircleShape2D_hrmh8")
+
+[node name="ClosedEyelids" type="Sprite2D" parent="."]
+scale = Vector2(3, 3)
+texture = ExtResource("5_m25an")
+
+[node name="AimSFX" type="AudioStreamPlayer2D" parent="."]
+stream = ExtResource("9_yf4me")
